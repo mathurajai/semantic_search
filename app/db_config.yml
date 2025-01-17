@@ -1,0 +1,11 @@
+default: &default
+  db.host: localhost
+  db.port: 5432
+  db.name: demodb
+  db.user: demouser
+  db.password: secret
+
+  db.pool.max-connections: 2
+
+dev:
+  <<: *default
