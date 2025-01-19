@@ -3,6 +3,7 @@ from backend.config_loader import load_all_configs
 from backend.embeddings_generator import generate_embeddings
 from backend.persistence_postgres import persist_records, cosine_search
 from backend.item import Item
+#from frontend.app import start_frontend
 
 # Get the logger
 logger = get_logger(__name__)
@@ -13,6 +14,7 @@ sentence3 = "The application crashes when I try to upload a file."
 sentence4 = "The alerts are not being sent to my email."
 sentence5 = "The translation feature is planned for next sprint."
 sentence6 = "The application crash related to logging is getting fixed in sprint4"
+sentence7 = "I am good."
 
 example_sentences = [
     sentence1,
@@ -21,6 +23,7 @@ example_sentences = [
     sentence4,
     sentence5,
     sentence6,
+    sentence7,
     "Yesterday's weather was rainy.",
     "This movie is more interesting than the last one.",
     "Despite the heavy rain, the event continued as planned.",
@@ -28,6 +31,7 @@ example_sentences = [
     "What time does the meeting start?",
     "It's raining cats and dogs.",
     "He kicked the bucket."
+
 ]
 
 test_sentences = {
@@ -36,7 +40,8 @@ test_sentences = {
     "The software freezes during the login process.": sentence3,
     "There is a bug that causes the app to close unexpectedly.": [sentence3, sentence6],
     "I am experiencing issues with the notification settings.": sentence4,
-    "The app should support multiple languages, which would be convenient.": sentence5
+    "The app should support multiple languages, which would be convenient.": sentence5,
+    "I am happy." : sentence7
 }
 
 def main():
@@ -56,7 +61,7 @@ def main():
     # search similar sentences
     for test_sentence_key, test_sentence_values in test_sentences.items():
         search_cosine_similar([test_sentence_key])
-        
+    
                           
 def search_cosine_similar(query):
     query_embedding = generate_embeddings(query)[0].embedding

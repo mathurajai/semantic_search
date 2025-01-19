@@ -1,41 +1,42 @@
-from logging_config import get_logger
+from app.logging_config import get_logger
 import psycopg2
-from psycopg2 import pool
-from backend.config_loader import get_config
+from app.backend.pool_postgres import get_connection, release_connection
 
 # Get the logger
 logger = get_logger(__name__)
+sentences = None
 
-_db_connection_pool = None
-
-def initialize_db_connection_pool():
-    global _db_connection_pool
+def get_available_sentences():
+    global sentences
+    if sentences is not None:
+        return sentences
     
-    if _db_connection_pool is None:
-        # Read the properties file
-        config = get_config()
+    sentences = []
+    conn = None
+    try:
+        # Get a connection from the pool
+        conn = get_connection()
+        cursor = conn.cursor()
 
-        db_params = {
-            'host': config['db.host'],
-            'port': config['db.port'],
-            'database': config['db.name'],
-            'user': config['db.user'],
-            'password': config['db.password']
-        }
-
-        # Initialize the connection pool
-        _db_connection_pool = pool.SimpleConnectionPool(
-            1,  # Minimum number of connections
-            config['db.pool.max-connections'],  # Maximum number of connections
-            **db_params
-        )
-
-def get_connection():
-    initialize_db_connection_pool()
-    return _db_connection_pool.getconn()
-
-def release_connection(conn):
-    _db_connection_pool.putconn(conn)
+        # Define your query 
+        query = "SELECT content FROM items" 
+        # Execute the query 
+        cursor.execute(query) 
+        # Fetch the results 
+        results = cursor.fetchall()
+        # Collect the results 
+        for row in results:
+            sentences.append(row[0])
+        
+        logger.info(f"{len(sentences)} sentence(s) collected from db")
+        return sentences
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error while querying sentences: {error}")
+    finally:
+        # Release the connection back to the pool
+        if conn:
+            cursor.close()
+            release_connection(conn)
 
 def persist_records(items):
     conn = None
@@ -68,6 +69,7 @@ def persist_records(items):
     finally:
         # Release the connection back to the pool
         if conn:
+            cursor.close()
             release_connection(conn)
 
 def cosine_search(item):
@@ -88,12 +90,12 @@ def cosine_search(item):
         for row in cursor.fetchall():
             # Only add those that are above threshold
             if row[2] < 0.7:
-                results.append(f"ID: {row[0]}, CONTENT: {row[1]}, Cosine Similarity: {row[2]}")
+                results.append(f"CONTENT: {row[1]}, Cosine Similarity: {row[2]}")
         
         return results
     
-    except Exception as e:
-        logger.error(f"Error executing query {str(e)}")
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error while querying sentences: {error}")
     finally:
         # Close communication with the PostgreSQL database server
         cursor.close()

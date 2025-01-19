@@ -1,4 +1,4 @@
-from backend.item import Item
+from app.backend.item import Item
 from sentence_transformers import SentenceTransformer
 
 # Load the model from the local directory
