@@ -12,7 +12,7 @@ On terminal, go to the directory where the project is cloned and run the followi
 \```bash
 cd ./db-setup
 docker compose up -d
-\```
+
 It will start PgVector on port 5432<br>
 ##########<br>
 
