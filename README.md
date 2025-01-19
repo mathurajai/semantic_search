@@ -9,10 +9,10 @@ Also how to actually use semantic search with PgVector and with Redis.
 Step 1<br>
 To start the Postgres with PgVector as docker container<br>
 On terminal, go to the directory where the project is cloned and run the following command<br>
-\```bash
+```bash
 cd ./db-setup
 docker compose up -d
-
+```
 It will start PgVector on port 5432<br>
 ##########<br>
 
@@ -26,13 +26,13 @@ Install Python following the instructions on the download page.<br>
 
 2. Create Virtual environment and activate<br>
 On the terminal, go to the directory where the project is cloned and create the virtual env<br>
-\```bash
+```bash
 ## Setting Up a Python Virtual Environment
 python -m venv .venv
 ./.venv/Scripts/activate
-\```
+```
 
 3. Install all the required packages on this virtual env<br>
-\```bash
+```bash
 pip install -r app/requirements.txt
-\```
+```
