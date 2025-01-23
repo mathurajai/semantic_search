@@ -1,7 +1,8 @@
 from app.logging_config import get_logger
 from app.backend.config_loader import load_all_configs
 from app.backend.embeddings_generator import generate_embeddings
-from app.backend.persistence_postgres import persist_records, cosine_search
+#import app.backend.postgres.persistence_postgres as pg
+import app.backend.redis.persistence_redis as rd
 from app.backend.item import Item
 
 # Get the logger
@@ -53,11 +54,17 @@ load_all_configs("./app/")
 items = generate_embeddings(sentences=example_sentences)
 
 # persist the items
-persist_records(items)
-                     
+#pg.persist_records(items)
+rd.persist_records(items)
+
+def get_available_sentences():
+    #return pg.get_available_sentences()
+    return rd.get_available_sentences()
+
 def search_cosine_similar(query):
     query_embedding = generate_embeddings(query)[0].embedding
-    results = cosine_search(Item(content=query, embedding=query_embedding))
+    #results = pg.cosine_search(Item(content=query, embedding=query_embedding))
+    results = rd.cosine_search(Item(content=query, embedding=query_embedding))
     logger.info(f"For {query} the cosine similarity results are {results}")
     return results
 

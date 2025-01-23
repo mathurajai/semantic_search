@@ -1,5 +1,9 @@
+from app.logging_config import get_logger
 from app.backend.item import Item
 from sentence_transformers import SentenceTransformer
+
+# Get the logger
+logger = get_logger(__name__)
 
 # Load the model from the local directory
 model = SentenceTransformer('./app/model/allMiniLML6v2')
