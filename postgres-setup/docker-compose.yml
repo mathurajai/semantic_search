@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  postgres:
+    build: .
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/pgdata
+      - ./init_pgvector.sql:/docker-entrypoint-initdb.d/init_pgvector.sql
+    environment:
+      POSTGRES_USER: demouser
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: demodb
+  
+volumes: 
+  pgdata:

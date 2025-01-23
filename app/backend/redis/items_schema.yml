@@ -1,0 +1,16 @@
+version: '0.1.0'
+
+index:
+  name: items
+  prefix: items
+
+fields:
+  - name: content
+    type: text
+  - name: content_embedding
+    type: vector
+    attrs:
+      algorithm: flat
+      dims: 384
+      distance_metrics: cosine
+      datatype: float32
